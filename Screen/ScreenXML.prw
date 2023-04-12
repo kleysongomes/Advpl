@@ -4,15 +4,15 @@
 #INCLUDE "FWMVCDEF.CH"
 #INCLUDE "TopConn.ch"
 
-/*/{Protheus.doc} User Function MORA9999
-  Tela MVC TABELA Z99
+/*/{Protheus.doc} User Function ScreenXML
+  Tela MVC TABELA Z99 (Arquivos SX na pasta SRC > Files_sx)
   @type  User Function
   @author Kleyson Gomes
   @since 14/01/2023
   @version 12.33
   @return
 /*/
-User Function MORA9999()
+User Function ScreenXML()
 
 	Private aRotinaZ99   := MenuDef()
 	private cTitulo      := "Importação de Arquivos XML"
@@ -46,11 +46,11 @@ Static Function MenuDef()
 
 	Local aRotinaZ99 := {}
 
-	aAdd( aRotinaZ99, { 'Visualizar'	, 'VIEWDEF.MORA9999', 0, 2, 0, NIL } )
-	aAdd( aRotinaZ99, { 'Incluir' 		, 'VIEWDEF.MORA9999', 0, 3, 0, NIL } )
-	aAdd( aRotinaZ99, { 'Alterar' 		, 'VIEWDEF.MORA9999', 0, 4, 0, NIL } )
-	aAdd( aRotinaZ99, { 'Excluir' 		, 'VIEWDEF.MORA9999', 0, 5, 0, NIL } )
-	aAdd( aRotinaZ99,{"CriaXML", "U_GeraXml()"		,0,18})
+	aAdd( aRotinaZ99, { 'Visualizar'	, 'VIEWDEF.ScreenXML', 0, 2, 0, NIL 	} )
+	aAdd( aRotinaZ99, { 'Incluir' 		, 'VIEWDEF.ScreenXML', 0, 3, 0, NIL 	} )
+	aAdd( aRotinaZ99, { 'Alterar' 		, 'VIEWDEF.ScreenXML', 0, 4, 0, NIL 	} )
+	aAdd( aRotinaZ99, { 'Excluir' 		, 'VIEWDEF.ScreenXML', 0, 5, 0, NIL 	} )
+	aAdd( aRotinaZ99,	{"CriaXML"			, "U_GeraXml()"			,	0,	18				}	)
 
 Return aRotinaZ99
 
@@ -84,7 +84,7 @@ Return oModel
   /*/
 Static Function ViewDef()
 
-	Local oModel := FWLoadModel('MORA9999')
+	Local oModel := FWLoadModel('ScreenXML')
 	Local oStruZ99  := FWFormStruct( 2, 'Z99' )
 
 	oViewZ99 := FWFormView():New()
@@ -133,15 +133,15 @@ Static Function fCriaXML()
 		return
 	endif
 
-	fWrite(nHdl, "<?xml version='1.0' encoding='UTF-8'?>"+Chr(13)+Chr(10))
-	fWrite(nHdl, "<dados>"+Chr(13)+Chr(10))
-	fWrite(nHdl,"<data>"+dToC(dDataBase)+"</data>"+Chr(13)+Chr(10))
-	fWrite(nHdl,"<hora>"+Time()+"</hora>"+Chr(13)+Chr(10))
-	fWrite(nHdl,"<xml>"+Chr(13)+Chr(10))
+	fWrite(nHdl, "<?xml version='1.0' encoding='UTF-8'?>"	+Chr(13)+Chr(10))
+	fWrite(nHdl, "<dados>"																+Chr(13)+Chr(10))
+	fWrite(nHdl,"<data>"+dToC(dDataBase)+"</data>"				+Chr(13)+Chr(10))
+	fWrite(nHdl,"<hora>"+Time()+"</hora>"									+Chr(13)+Chr(10))
+	fWrite(nHdl,"<xml>"																		+Chr(13)+Chr(10))
 	While !QRYZ99->(eof())
-		fWrite(nHdl, '<registro id="'+cValToChar(nAtu)+'">'+Chr(13)+Chr(10))
-		fWrite(nHdl, "<sequencial>"+QRYZ99->Z99_SEQIMP+"</sequencial>"+Chr(13)+Chr(10))
-		fWrite(nHdl, "<arquivo>"+QRYZ99->Z99_ARQUIV+"</arquivo>"+Chr(13)+Chr(10))
+		fWrite(nHdl, '<registro id="'+cValToChar(nAtu)+'">'								+Chr(13)+Chr(10))
+		fWrite(nHdl, "<sequencial>"+QRYZ99->Z99_SEQIMP+"</sequencial>"		+Chr(13)+Chr(10))
+		fWrite(nHdl, "<arquivo>"+QRYZ99->Z99_ARQUIV+"</arquivo>"					+Chr(13)+Chr(10))
 		fWrite(nHdl, "</registro>"+Chr(13)+Chr(10))
 
 		nAtu++
@@ -149,8 +149,8 @@ Static Function fCriaXML()
 	EndDo
 
 	QRYZ99->(DbCloseArea())
-	fWrite(nHdl, "</xml>"+Chr(13)+Chr(10))
-	fWrite(nHdl, "</dados>"+Chr(13)+Chr(10))
+	fWrite(nHdl, "</xml>"			+Chr(13)+Chr(10))
+	fWrite(nHdl, "</dados>"		+Chr(13)+Chr(10))
 
 	fClose(nHdl)
 
@@ -184,15 +184,15 @@ Static Function fLeXML()
 		EndIf
 
         /* Montando mensagem de Data e Hora passados no Xml */
-		cMsg := "Data: "+oLido:_Dados:_Data:Text + Chr(13)+Chr(10)
-		cMsg := "Hora: "+oLido:_Dados:_Hora:Text + Chr(13)+Chr(10)
+		cMsg := "Data: "	+oLido:_Dados:_Data:Text 		+Chr(13)+Chr(10)
+		cMsg := "Hora: "	+oLido:_Dados:_Hora:Text 		+Chr(13)+Chr(10)
 
         /* Montando mensagem passada no Xml */
 		oProds := oLido:_Dados:_xml:_registro
 		For nAtual := 1 To Len(oProds)
-			cMsg += "ID: "+oProds[nAtual]:_id:Text+", "
-			cMsg += "Sequencial: "+oProds[nAtual]:_sequencial:Text+", "
-			cMsg += "Arquivo: "+oProds[nAtual]:_arquivo:Text
+			cMsg += "ID: "						+oProds[nAtual]:_id:Text+", "
+			cMsg += "Sequencial: "		+oProds[nAtual]:_sequencial:Text+", "
+			cMsg += "Arquivo: "				+oProds[nAtual]:_arquivo:Text
 			cMsg += Chr(13)+Chr(10)
 		Next
 
