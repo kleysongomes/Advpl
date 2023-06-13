@@ -2,14 +2,13 @@
 #Include "RPTDef.ch"
 #Include "FWPrintSetup.ch"
 
-/*/{Protheus.doc} User Function MORR1230
-  Print identification tag with query
-  @type  User Function
-  @author Kleyson Gomes
-  @since 13/06/2023
-  @version version
-  @return Nil
-/*/
+// {Protheus.doc} User Function MORR1230
+// Print identification tag with query
+// @type  User Function
+// @author Kleyson Gomes
+// @since 13/06/2023
+// @version version
+// @return Nil
 
 User Function printTag()
 
@@ -31,7 +30,7 @@ User Function printTag()
   Private oFont1     :=  TFont():New( "Arial",        ,       12,         .T.)  
   Private nLin       :=  29
 
-/* Definition of parameter fields */
+// Definition of parameter fields 
 
     aAdd(aBox,  {1,    "field 1",         Space(6),         "",                 "",       "zz2",    "",    30,    .F.})                 //MV_PAR01
     aAdd(aBox,  {1,    "field 2",         Space(30),        "",                 "",       "zz1",    "",    80,    .T.})                //MV_PAR02
@@ -43,7 +42,7 @@ User Function printTag()
     aAdd(aBox,  {1,    "field 4",         Space(7),         "@E 9999999",       "",       "",       "",    30,    .F.})          //MV_PAR08
     aAdd(aBox,  {1,    "field 5",         Space(30),        "",                 "",       "",       "",    80,    .F.})         //MV_PAR09
 
-/* Builds the parameters screen for user interaction */
+// Builds the parameters screen for user interaction 
 
     If !ParamBox(aBox,"parameters",@aRet)
       Return
@@ -51,7 +50,7 @@ User Function printTag()
 
     If !(Empty(MV_PAR01))
       cFilter := "% '%" + MV_PAR02 + "%' %"
-// Executa a query e preenche as variaveis com os dados coletados caso haja contrato no MV_PAR01 //
+// Executa a query e preenche as variaveis com os dados coletados caso haja contrato no MV_PAR01 
 
         BeginSql alias 'QRYzz2'
           SELECT
@@ -79,13 +78,13 @@ User Function printTag()
           cfield4     :=  MV_PAR08
           cfield5     :=  MV_PAR09
 
-/* Closes the connection opened by the query */
+// Closes the connection opened by the query
 
     QRYzz2->(dbclosearea())
 
     else
 
-/* Direct completion of the parameters if there is no contract */
+// Direct completion of the parameters if there is no contract
 
           cfield1     :=  MV_PAR02
           cDtfield1   :=  MV_PAR03
@@ -98,7 +97,7 @@ User Function printTag()
 
     Endif
 
-/* print settings */
+// print settings
 
     If oPrinter == Nil
         lPreview                          := .T.
@@ -111,7 +110,7 @@ User Function printTag()
 
     oPrinter:StartPage()
 
-//*Assembles the graphic print in PDF */
+///Assembles the graphic print in PDF
 
     oPrinter:SayBitmap( 40,   0190,     "\imagens\sua-logo.png",                                                    55,        30)
     oPrinter:Say(       50,   0020,     'IDENTIFICATION OF',                                                        oFont1N,  100)
@@ -129,7 +128,7 @@ User Function printTag()
 
     oPrinter:EndPage()
 
-/* Saves the file and opens it in the installed default PDF viewer or web browser */
+// Saves the file and opens it in the installed default PDF viewer or web browser
 
     oPrinter:Preview()
 
