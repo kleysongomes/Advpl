@@ -54,7 +54,7 @@ Static Function MenuDef()
 
 Return aRotinaZ99
 
-/*/{Protheus.doc} ModelDef
+//{Protheus.doc} ModelDef
 //  (long_description)
 //  @type  Static Function
 //  @author Kleyson Gomes
