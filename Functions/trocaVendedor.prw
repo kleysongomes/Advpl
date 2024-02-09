@@ -35,7 +35,7 @@ Return .T.
 
 
 
-/*{Protheus.doc} User Function MORF951A
+/*{Protheus.doc} User Function ValidaPeriodo
   Valida o período de comissionamento
   @type  user Function
   @author Kleyson Gomes
@@ -44,7 +44,7 @@ Return .T.
   @param jDados
   @return 
   */
-User Function MORF951A(jDados)
+User Function ValidaPeriodo(jDados)
   Local aRet                := {}
   Local aBox                := {}
   Local cQuery
@@ -107,7 +107,7 @@ User Function MORF951B()
 	jDados['Lider_Atual'] 		:= ZC0->ZC0_CODSUP
 	jDados['Supervisor_Atual']:= ZC0->ZC0_CODGER
 	
-	U_MORF951A(jDados)
+	U_ValidaPeriodo(jDados)
 Return
 
 /*{Protheus.doc} User Function MORF951C
@@ -138,10 +138,10 @@ User function MORF951C()
 	jDados['Nome_Cliente']     := QRY1->A1_NOME
   QRY1->(DbCloseArea())
 
-	U_MORF951A(jDados)
+	U_ValidaPeriodo(jDados)
 Return
 
-/*/{Protheus.doc} EmlAprova
+/*{Protheus.doc} EmlAprova
   Envia e-mail para aprovação
   @type  Static Function
   @author Kleyson Gomes
@@ -149,10 +149,10 @@ Return
   @version 12.33
   @param 
   @return 
-/*/
+*/
 Static Function EmlAprova(jDados)
   Local cHtml           := MemoRead("\workflow\alteracao_vendedor.htm")
-  Local cTo             := SuperGetMV("MV_APVCOMI", .F., "kleysongomes@moradadapaz.com.br")
+  Local cTo             := SuperGetMV("MV_APVCOMI", .F., "kleysongomesr@gmail.com.br")
   Local cAssunto        := "WF" + cEmpAnt + "-" + cFilAnt + " - Solicitação de alteração de vendedor"
   Local cDados          := ""
   Local nCont           := 0
