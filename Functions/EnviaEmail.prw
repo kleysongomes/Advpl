@@ -17,7 +17,7 @@ User Function EnviaEmail(cAssunto, cTo, cMensagem, cAnexos, cBcc, cServer, cAcco
 	Default cAnexos		:= ""
 	Default cBcc		:= ""
 	Default cCc			:= ""
-	Default lBaseTeste	:= Alltrim(GetServerIp()) == "192.168.90.241"
+	Default lBaseTeste	:= Alltrim(GetServerIp()) == "xxx.xxx.xx.xxx"
 	
 	/*	Caso o server sendo executado seja base de testes, não envia o e-mail para o publico, 
 		somente para quem esta logado	*/
