@@ -33,15 +33,15 @@ User Function ScreenXML()
 
 Return
 
-/*/{Protheus.doc} MenuDef
-  @type  Static Function
-  @author Kleyson Gomes
-  @since 14/01/2023
-  @version 12.33
-  @param
-  @return aRotinaZ99
-  @example
-/*/
+//{Protheus.doc} MenuDef
+//  @type  Static Function
+//  @author Kleyson Gomes
+//  @since 14/01/2023
+//  @version 12.33
+//  @param
+// @return aRotinaZ99
+//  @example
+
 Static Function MenuDef()
 
 	Local aRotinaZ99 := {}
