@@ -4,18 +4,18 @@
 #INCLUDE "FWMVCDEF.CH"
 #INCLUDE "TopConn.ch"
 
-/*/{Protheus.doc} User Function ScreenXML
-  Tela MVC TABELA Z99 (Arquivos SX na pasta SRC > Files_sx)
-  @type  User Function
-  @author Kleyson Gomes
-  @since 14/01/2023
-  @version 12.33
-  @return
-/*/
+//{Protheus.doc} User Function ScreenXML
+// Tela MVC TABELA Z99 (Arquivos SX na pasta SRC > Files_sx)
+// @type  User Function
+// @author Kleyson Gomes
+// @since 14/01/2023
+// @version 12.33
+// @return
+
 User Function ScreenXML()
 
 	Private aRotinaZ99   := MenuDef()
-	private cTitulo      := "ImportaÁ„o de Arquivos XML"
+	private cTitulo      := "Importa√ß√£o de Arquivos XML"
 	Private cTabela      := "Z99"
 	Private cFilTop      := ""
 
@@ -55,14 +55,14 @@ Static Function MenuDef()
 Return aRotinaZ99
 
 /*/{Protheus.doc} ModelDef
-  (long_description)
-  @type  Static Function
-  @author Kleyson Gomes
-  @since 15/01/2023
-  @version version
-  @param
-  @return oModel
-/*/
+//  (long_description)
+//  @type  Static Function
+//  @author Kleyson Gomes
+//  @since 15/01/2023
+//  @version version
+//  @param
+//  @return oModel
+
 Static Function ModelDef()
 
 	Local oStructZ99 := FWFormStruct(1, 'Z99')
@@ -71,17 +71,17 @@ Static Function ModelDef()
 	oModel := MPFormModel():New('Z99MODEL')
 	oModel:AddFields('FIELDSZ99', ,oStructZ99)
 	oModel:SetPrimaryKey({"Z99_FILIAL","Z99_SEQIMP"})
-	oModel:SetDescription("ImportaÁ„o de Arquivos XML")
+	oModel:SetDescription("Importa√ß√£o de Arquivos XML")
 
 Return oModel
 
-/*/{Protheus.doc} User Function legXml
-  @type  Static Function
-  @author Kleyson Gomes
-  @since 14/01/2023
-  @version 12.33
-  @return Nil
-  /*/
+//{Protheus.doc} User Function legXml
+//  @type  Static Function
+//  @author Kleyson Gomes
+//  @since 14/01/2023
+//  @version 12.33
+//  @return Nil
+
 Static Function ViewDef()
 
 	Local oModel := FWLoadModel('ScreenXML')
@@ -117,7 +117,7 @@ Static Function fCriaXML()
 	nHdl := fCreate(cDirect + cArquivo)
 
 	if nHdl == -1
-		MsgStop("N„o foi possÌvel gerar o arquivo!")
+		MsgStop("N√£o foi poss√≠vel gerar o arquivo!")
 		return
 	endif
 
@@ -129,7 +129,7 @@ Static Function fCriaXML()
 	EndSql
 
 	if QRYZ99->(eof())
-		MsgStop("N„o h· registros para exportar!")
+		MsgStop("N√£o h√° registros para exportar!")
 		return
 	endif
 
@@ -175,12 +175,12 @@ Static Function fLeXML()
 
         /* Verifica se houve erros e exibe*/
 		If !Empty(cErros)
-			Aviso('AtenÁ„o', "Erros: "+cErros, {'Ok'}, 03)
+			Aviso('Aten√ß√£o', "Erros: "+cErros, {'Ok'}, 03)
 		EndIf
 
         /* Verifica se houve avisos e exibe*/
 		If !Empty(cAvisos)
-			Aviso('AtenÁ„o', "Avisos: "+cAvisos, {'Ok'}, 03)
+			Aviso('Aten√ß√£o', "Avisos: "+cAvisos, {'Ok'}, 03)
 		EndIf
 
         /* Montando mensagem de Data e Hora passados no Xml */
@@ -197,6 +197,6 @@ Static Function fLeXML()
 		Next
 
 		//Mostrando a mensagem do xml lido
-		Aviso('AtenÁ„o', cMsg, {'Ok'}, 03)
+		Aviso('Aten√ß√£o', cMsg, {'Ok'}, 03)
 	EndIf
 Return
