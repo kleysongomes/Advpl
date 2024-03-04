@@ -7,9 +7,15 @@
 			"name": "TOTVS Language Debug",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "../totvs/bin/smartclient/smartclient.exe",
+			"smartclientBin": "E:/ProtheusKley/TOTVS/Protheus_12_1_2210/Protheus/bin/smartclient/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
-	]
+	],
+	"lastPrograms": [
+		{
+			"label": "sigamdi"
+		}
+	],
+	"lastProgramExecuted": "sigamdi"
 }

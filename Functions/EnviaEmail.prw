@@ -8,7 +8,6 @@ User Function EnviaEmail(cAssunto, cTo, cMensagem, cAnexos, cBcc, cServer, cAcco
 
 	Local lResult		:= .F.		
 	Local lEnviado		:= .F.		// Resultado da tentativa de comunicacao com servidor de E-Mail
-	Local cTitulo
 	
 	Default cServer		:= GetMV("MV_RELSERV")
 	Default cAccount	:= GetMV("MV_RELACNT")
