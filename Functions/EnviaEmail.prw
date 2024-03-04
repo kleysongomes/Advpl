@@ -19,35 +19,35 @@ User Function EnviaEmail(cAssunto, cTo, cMensagem, cAnexos, cBcc, cServer, cAcco
 	Default cCc			:= ""
 	Default lBaseTeste	:= Alltrim(GetServerIp()) == "xxx.xxx.xx.xxx"
 	
-	/*	Caso o server sendo executado seja base de testes, nÃ£o envia o e-mail para o publico, 
+	/*	Caso o server sendo executado seja base de testes, não envia o e-mail para o publico, 
 		somente para quem esta logado	*/
 	If lBaseTeste
-		/*Caso a conexÃ£o seja com interface*/
+		/*Caso a conexão seja com interface*/
 		If !IsBlind()
 			cTo := UsrRetMail( __cUserId )
 			cAssunto := "(Base de Testes)" + cAssunto
 		EndIf
 	EndIf
-	//ÃšÃ„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Â¿
-	//Â³ Tenta conexao com o servidor de E-Mail Â³
-	//Ã€Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã™
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Tenta conexao com o servidor de E-Mail ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	ConOut('---------------------- ENVIO DE E-MAIL ----------------------------------' + CRLF)
-	CONNECT SMTP SERVER cServer ACCOUNT cAccount PASSWORD cPassword RESULT lResult // Resultado da tentativa de conexÃ£o
+	CONNECT SMTP SERVER cServer ACCOUNT cAccount PASSWORD cPassword RESULT lResult // Resultado da tentativa de conexão
 	
 	If lResult
 		conout("Conectado com servidor de E-Mail - " + cServer + CRLF)
 	else
-		conout("NÃ£o foi possÃ­vel conectar ao servidor de E-Mail - " + cServer + CRLF)
+		conout("Não foi possível conectar ao servidor de E-Mail - " + cServer + CRLF)
 	EndIf	
 	
 	If Mailauth(cAccount,cPassword)
 		conout("Autenticado servidor de E-Mail - " + cServer + CRLF)	
 	else
-		conout("NÃ£o Autenticado servidor de E-Mail - " + cServer + CRLF)
+		conout("Não Autenticado servidor de E-Mail - " + cServer + CRLF)
 	EndIf
 
 	If !lResult
-		MsgInfo("NÃ£o foi possÃ­vel se conectar no servidor de e-mail", Funname())
+		MsgInfo("Não foi possível se conectar no servidor de e-mail", Funname())
 	Else
 		SEND MAIL;
 		FROM cEnviador;

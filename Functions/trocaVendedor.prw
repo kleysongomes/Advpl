@@ -2,13 +2,13 @@
 #INCLUDE 'TOPCONN.CH'
 
 /*{Protheus.doc} User Function trocaVendedor
-  Valida solicitaÃ§Ã£o de troca de vendedor
+  Valida solicitação de troca de vendedor
   @type  User Function
   @author Kleson Gomes
   @since 09/01/2023
   @version 12.33
   @param 
-  @return Nil
+  @return .T.
   */
 User Function trocaVendedor(jDados)
   /* Monta os dados para o Workflow */
@@ -29,14 +29,14 @@ User Function trocaVendedor(jDados)
   jDados['Nome_Supervisor_Novo']        := POSICIONE("SA3",1,XFILIAL("SA3") + jDados['Supervisor_Novo']       ,"A3_NOME" )
 
   /* Chamada da rotina que trata o Workflow e envia os dados para o e-mail */
-  FWMsgRun(, {|oSay| lEmail := EmlAprova(jDados) }, "Processamento", "Enviando e-mail para aprovaÃ§Ã£o da modificaÃ§Ã£o")
+  FWMsgRun(, {|oSay| lEmail := EmlAprova(jDados) }, "Processamento", "Enviando e-mail para aprovação da modificação")
 
 Return .T.
 
 
 
 /*{Protheus.doc} User Function ValidaPeriodo
-  Valida o perÃ­odo de comissionamento
+  Valida o período de comissionamento
   @type  user Function
   @author Kleyson Gomes
   @since 11/01/2023
@@ -51,7 +51,7 @@ User Function ValidaPeriodo(jDados)
   Local oComissao           := GmComissao():New()
 
   If Empty(jDados['Dt_Ativacao'])
-    MsgAlert("Data da emissÃ£o nÃ£o encontrada!", "ValidaÃ§Ã£o da Data")
+    MsgAlert("Data da emissão não encontrada!", "Validação da Data")
     Return
   EndIf
 
@@ -59,7 +59,7 @@ User Function ValidaPeriodo(jDados)
                                 + RetSqlName("SZA") +  " WHERE d_e_l_e_t_ = ' ' and '" ;
                                 + jDados['Dt_Ativacao'] + "' BETWEEN ZA_DTINI AND ZA_DTFIM"
 
-	/* Coleta os dados do perÃ­odo para a verificaÃ§Ã£o */
+	/* Coleta os dados do período para a verificação */
   TcQuery cQuery New Alias "QRY"
 	jDados['Cod_Periodo']     := QRY->ZA_CODIGO
   jDados['Periodo']         := QRY->ZA_DESC
@@ -67,16 +67,16 @@ User Function ValidaPeriodo(jDados)
 
   jDados['Status_Periodo']    := oComissao:GetDescPeriodo( jDados['Cod_Periodo'] )
 
-  /* Valida perÃ­odo sicronizado com as rotinas de comissÃ£o */
+  /* Valida período sicronizado com as rotinas de comissão */
   If jDados['Status_Periodo'] == "Fechado"
-    MsgAlert("NÃ£o Ã© possÃ­vel alterar o vendedor devido o perÃ­odo comercial jÃ¡ estÃ¡ fechado", "ValidaÃ§Ã£o de PerÃ­odo")
+    MsgAlert("Não é possível alterar o vendedor devido o período comercial já está fechado", "Validação de Período")
     Return
   EndIf
 
-  aAdd(aBox,{1,"CÃ³digo NOVO Vendedor:",Space(6),"","","SA3","",6,.T.}) 	//MV_PAR01
+  aAdd(aBox,{1,"Código NOVO Vendedor:",Space(6),"","","SA3","",6,.T.}) 	//MV_PAR01
   aAdd(aBox,{11,"Motivo da Troca","",".T.",".T.",.T.})                  //MV_PAR02
 
-  If ParamBox(aBox,"AtualizaÃ§Ã£o: Dados Vendedor",@aRet)
+  If ParamBox(aBox,"Atualização: Dados Vendedor",@aRet)
     jDados['Vendedor_Novo'] 	:= MV_PAR01
     jDados['Motivo_Troca'] 		:= MV_PAR02
     /* Rotina que executa a montagem dos dados e chama o envio do e-mail */
@@ -85,44 +85,44 @@ User Function ValidaPeriodo(jDados)
 
 Return   
 
-/*{Protheus.doc} User Function MORF951B
-	Envia dados para a validaÃ§Ã£o e alteraÃ§Ã£o de vendedor
+/*{Protheus.doc} User Function Func951b
+	Envia dados para a validação e alteração de vendedor
 	@type  User Function
 	@author Kleyson Gomes
 	@since 10/01/2023
 	@version 12.33
 	@return 
 	*/
-User Function MORF951B()
+User Function Func951b()
 
 	Local jDados     					:= JsonObject():New()
 
-	/* Coleta de informaÃ§Ãµes atuais da venda */
-	jDados['Dt_Ativacao']			:= DTOS(ZC0->ZC0_DTATIV)
+	/* Coleta de informações atuais da venda */
+	jDados['Dt_Ativacao']			:= DTOS(table->table_DTATIV)
 	jDados['Tipo']	 					:= "JAZIGO"
-	jDados['Cliente'] 				:= ZC0->ZC0_CODCLI
-  jDados['Nome_Cliente'] 		:= ZC0->ZC0_NOMCLI
-	jDados['Codigo'] 					:= ZC0->ZC0_CONTRT
-	jDados['Vendedor_Atual'] 	:= ZC0->ZC0_CODVEN
-	jDados['Lider_Atual'] 		:= ZC0->ZC0_CODSUP
-	jDados['Supervisor_Atual']:= ZC0->ZC0_CODGER
+	jDados['Cliente'] 				:= table->table_CODCLI
+  jDados['Nome_Cliente'] 		:= table->table_NOMCLI
+	jDados['Codigo'] 					:= table->table_CONTRT
+	jDados['Vendedor_Atual'] 	:= table->table_CODVEN
+	jDados['Lider_Atual'] 		:= table->table_CODSUP
+	jDados['Supervisor_Atual']:= table->table_CODGER
 	
 	U_ValidaPeriodo(jDados)
 Return
 
-/*{Protheus.doc} User Function MORF951C
-	Envia dados para a validaÃ§Ã£o e alteraÃ§Ã£o de vendedor
+/*{Protheus.doc} User Function Func951c
+	Envia dados para a validação e alteração de vendedor
 	@type  Function
 	@author Kleyson Gomes
 	@since 11/01/2023
 	@version 12.33
 	*/
-User function MORF951C()
+User function Func951c()
 
 	Local jDados     					:= JsonObject():New()
   Local cQryCli             :=""
 
-  /* coleta de informaÃ§Ãµes atuais da venda */
+  /* coleta de informações atuais da venda */
 	jDados['Tipo']	 					:= "VENDA"
 	jDados['Dt_Ativacao']			:= DTOS(SL1->L1_EMISNF)
 	jDados['Cliente'] 				:= SL1->L1_CLIENTE
@@ -142,7 +142,7 @@ User function MORF951C()
 Return
 
 /*{Protheus.doc} EmlAprova
-  Envia e-mail para aprovaÃ§Ã£o
+  Envia e-mail para aprovação
   @type  Static Function
   @author Kleyson Gomes
   @since 09/01/2023
@@ -152,8 +152,8 @@ Return
 */
 Static Function EmlAprova(jDados)
   Local cHtml           := MemoRead("\workflow\alteracao_vendedor.htm")
-  Local cTo             := SuperGetMV("MV_APVCOMI", .F., "kleysongomesr@gmail.com.br")
-  Local cAssunto        := "WF" + cEmpAnt + "-" + cFilAnt + " - SolicitaÃ§Ã£o de alteraÃ§Ã£o de vendedor"
+  Local cTo             := SuperGetMV("MV_APVCOMI", .F., "kleysongomes7@gmail.com.br")
+  Local cAssunto        := "WF" + cEmpAnt + "-" + cFilAnt + " - Solicitação de alteração de vendedor"
   Local cDados          := ""
   Local nCont           := 0
   Local lConfirma       := .T.
@@ -201,7 +201,7 @@ Static Function EmlAprova(jDados)
   Next nCont
 
   If lConfirma == .T.
-    MsgInfo("E-mail de aprovaÃ§Ã£o enviado!", "Envio de E-mail")
+    MsgInfo("E-mail de aprovação enviado!", "Envio de E-mail")
   EndIf
 
 Return lConfirma
