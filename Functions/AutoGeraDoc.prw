@@ -3,15 +3,15 @@
 #include "FwmBrowse.ch"
 #include "FWMVCDEF.CH"
 
-/*{Protheus.doc} GeraRA
-	Coleta e prepara os dados para a RA e impress√£o dos documentos 
+/*{Protheus.doc} GeraDoc
+	Coleta e prepara os dados para a DOC e impress„o dos documentos 
   @type  User Function
   @author Kleyson Gomes
   @since 29/11/2022
 	@version 12.33
   @return .T.
   */
-User function GeraRA()
+User function GeraDoc()
 
 	local aBox 						:= {}
 	local aBox2 					:= {}
@@ -23,10 +23,10 @@ User function GeraRA()
 
 	//Perguntas e coleta de dados
 	aAdd(aBox,{3,"Tipo de Troca",0,{"VIDA","ADMINISTRATIVO", "DEFINITIVO"},50,,.T.})																				//MV_PAR01
-	aAdd(aBox,{1,"Contrato" ,Space(6),"","","ZC0","",0,.T.}) 																				//MV_PAR02
+	aAdd(aBox,{1,"Contrato" ,Space(6),"","","Table","",0,.T.}) 																				//MV_PAR02
 	aAdd(aBox,{1,"Cod Cliente NOVO Titular" ,Space(6),"","","SA1","",0,.T.})												//MV_PAR03
-	aAdd(aBox,{1,"Grupo RA",Space(4),"", "", "SBM","",0,.T.}) 																			//MV_PAR04
-	aAdd(aBox,{1,"Data Do Obito" ,Space(8),"@R 99/99/9999","","","MV_PAR01 = 2",0,.F.}) 						//MV_PAR05
+	aAdd(aBox,{1,"Grupo Doc",Space(4),"", "", "SBM","",0,.T.}) 																			//MV_PAR04
+	aAdd(aBox,{1,"Data Reg" ,Space(8),"@R 99/99/9999","","","MV_PAR01 = 2",0,.F.}) 						//MV_PAR05
 
 		If !ParamBox(aBox,"Dados para troca",@aRet,{||validaAbox()})
 			Return
@@ -34,13 +34,13 @@ User function GeraRA()
 	
 	//Montando dados brutos no JSON
 	jDados['cod_Contrt'] 					:= MV_PAR02
-	jDados['cod_Titular'] 					:= Alltrim(ZC0->ZC0_CODCLI)
-	jDados['nom_Titular']					:= Alltrim(ZC0->ZC0_NOMCLI)
-	jDados['cpf_Titular']					:= transform(ZC0->ZC0_CGC, "@R 999.999.999-99")	
-	jDados['end_Titular']					:= Capital(Alltrim(ZC0->ZC0_TLOG) + " " + alltrim(ZC0->ZC0_END) + ", " + (ZC0->ZC0_NUMERO) + ", " + alltrim(ZC0->ZC0_BAIRRO) + ", " + alltrim(ZC0->ZC0_MUNICI)) + "/" + alltrim(ZC0->ZC0_EST)
-	jDados['cep_Titular']					:= transform(ZC0->ZC0_CEP, "@R 99.999-999")
-	jDados['est_Titular']					:= alltrim(ZC0->ZC0_EST)
-	jDados['dt_Obito'] 						:= transform(MV_PAR05,"@R 99/99/9999")
+	jDados['cod_Titular'] 				:= Alltrim(Table->Table_CODCLI)
+	jDados['nom_Titular']					:= Alltrim(Table->Table_NOMCLI)
+	jDados['cpf_Titular']					:= transform(Table->Table_CGC, "@R 999.999.999-99")	
+	jDados['end_Titular']					:= Capital(Alltrim(Table->Table_TLOG) + " " + alltrim(Table->Table_END) + ", " + (Table->Table_NUMERO) + ", " + alltrim(Table->Table_BAIRRO) + ", " + alltrim(Table->Table_MUNICI)) + "/" + alltrim(Table->Table_EST)
+	jDados['cep_Titular']					:= transform(Table->Table_CEP, "@R 99.999-999")
+	jDados['est_Titular']					:= alltrim(Table->Table_EST)
+	jDados['dt_reg'] 							:= transform(MV_PAR05,"@R 99/99/9999")
 
 	jDados['cod_NTitular'] 					:= MV_PAR03
 	jDados['nom_NTitular'] 					:= Alltrim(SA1->A1_NOME)
@@ -48,15 +48,15 @@ User function GeraRA()
 	jDados['end_NTitular']					:= Capital(Alltrim(SA1->A1_TIPOLOG) + " " + Alltrim(SA1->A1_END) + ", " + (SA1->A1_NUMERO) + ", " + Alltrim(SA1->A1_BAIRRO) + ", " + Alltrim(SA1->A1_MUN)) + "/" + Alltrim(SA1->A1_EST)
 	jDados['cep_NTitular']					:= transform(SA1->A1_CEP, "@R 99.999-999")
 
-	jDados['grp_RA']						:= MV_PAR04
+	jDados['grp_doc']						:= MV_PAR04
 	jDados['tp_troca']						:= MV_PAR01
 
 		if jDados['tp_troca'] = 1
 			jDados['num_RGTitular'] := Alltrim(SA1->A1_PFISICA)
 			jDados['Emi_RGTitular'] := Alltrim(SA1->A1_ORGEMIS)
-			jDados['tex_RA']				:= "RA gerada para realiza√ß√£o do processo de troca de titularidade entre o antigo titular " + jDados['nom_Titular'] + " e o novo titular " + jDados['nom_NTitular'] + "."
+			jDados['tex_DOc']				:= "Doc gerada para realizaÁ„o do processo de troca de titularidade entre o antigo titular " + jDados['nom_Titular'] + " e o novo titular " + jDados['nom_NTitular'] + "."
 		Else
-			jDados['tex_RA']				:= "RA gerada para realiza√ß√£o do processo de troca de titularidade entre o antigo titular " + jDados['nom_Titular'] + " e o novo titular " + jDados['nom_NTitular'] + "."
+			jDados['tex_DOC']				:= "Doc gerada para realizaÁ„o do processo de troca de titularidade entre o antigo titular " + jDados['nom_Titular'] + " e o novo titular " + jDados['nom_NTitular'] + "."
 		EndIf
 
 	//Loop herdeiros
@@ -83,33 +83,33 @@ User function GeraRA()
 			
 	Enddo
 
-	//Valida√ß√£o do dados preenchidos 
-	If !MsgYesNo("<b>Contrato:</b> " + jDados["cod_Contrt"]  + " <br><b>Novo titular: </b>" + jDados['nom_NTitular'] + " <br><b>CPF: </b>" + jDados['cpf_NTitular'] + " <br><b>Endere√ßo:</b>  " + jDados['end_NTitular'] + " <br><b>CEP </b>" + jDados['cep_NTitular'], "Os dados conferem?")
+	//ValidaÁ„o do dados preenchidos 
+	If !MsgYesNo("<b>Contrato:</b> " + jDados["cod_Contrt"]  + " <br><b>Novo titular: </b>" + jDados['nom_NTitular'] + " <br><b>CPF: </b>" + jDados['cpf_NTitular'] + " <br><b>EndereÁo:</b>  " + jDados['end_NTitular'] + " <br><b>CEP </b>" + jDados['cep_NTitular'], "Os dados conferem?")
 		Return
 	EndIf
 	
 	//Validacao de qual empresa para o preenchimento dos dados no Aditivo
 	If cCodEmp == "03" 
-		jDados['nom_Emp']							:= EncodeUTF8("MORADA CEMIT√âRIOS LTDA EPP", "cp1252")
-		jDados['cpnj_Emp']						:= "70.028.675/0001-24"
-		jDados['end_Emp']							:= EncodeUTF8("Rua Aurino Vila, 882, Ema√∫s, CEP 59.148-590, Parnamirim/RN", "cp1252")
+		jDados['nom_Emp']							:= EncodeUTF8("EMPRESA1", "cp1252")
+		jDados['cpnj_Emp']						:= "00.000.000/0000-00"
+		jDados['end_Emp']							:= EncodeUTF8("Rua , CEP, Cidade", "cp1252")
 	ElseIf cCodEmp == "05" 
-		jDados['nom_Emp']							:= EncodeUTF8("SERPOS SERVI√áOS P√ìSTUMOS LTDA", "cp1252")
-		jDados['cpnj_Emp']						:= "04.811.849/0001-04"
-		jDados['end_Emp']							:= EncodeUTF8("Av. Pres. Jo√£o Goulart, 2118, Vila Torres Galv√£o, CEP 53.403-560, Paulista/PE", "cp1252")
+		jDados['nom_Emp']							:= EncodeUTF8("EMPRESA2", "cp1252")
+		jDados['cpnj_Emp']						:= "00.000.000/0000-00"
+		jDados['end_Emp']							:= EncodeUTF8("Rua , CEP, Cidade", "cp1252")
 	ElseIf cCodEmp == "07"  
-		jDados['nom_Emp']							:= EncodeUTF8("S√ÉO FRANCISCO SERVI√áOS FUNER√ÅRIOS LTDA", "cp1252")
-		jDados['cpnj_Emp']						:= "08.968.665/0001-03"
-		jDados['end_Emp']							:= EncodeUTF8("Av. Jo√£o Machado, 1214, Jaguaribe, CEP 58.013-522, Jo√£o Pessoa/PB", "cp1252")
+		jDados['nom_Emp']							:= EncodeUTF8("EMPRESA3", "cp1252")
+		jDados['cpnj_Emp']						:= "00.000.000/0000-00"
+		jDados['end_Emp']							:= EncodeUTF8("Rua , CEP, Cidade", "cp1252")
 	Else
-		MsgAlert('N√£o foi possivel identificar a EMPRESA. Favor abrir um chamado ao CSTI relatando o problema!')
+		MsgAlert('N„o foi possivel identificar a EMPRESA. Favor abrir um chamado ao TI relatando o problema!')
 		Return .F.
 	EndIf
 		
-		AutoGeraRA(jDados) 
+		AutoGeraDoc(jDados) 
 Return 
 
-/*{Protheus.doc} AutoGeraRA
+/*{Protheus.doc} AutoGeraDoc
 	Gera a RA automaticamente
   @type  Function
   @author Kleyson Gomes
@@ -117,9 +117,9 @@ Return
 	@version 12.33
   @return .T.
 */
-Static function AutoGeraRA(jDados)
+Static function AutoGeraDoc(jDados)
 
-	cCodRA 			:= GetSxEnum("SZ7","Z7_NUMERO")
+	cCodDoc 			:= GetSxEnum("SZ7","Z7_NUMERO")
 	ConfirmSX8()
 
 	Local nCont2 			
@@ -128,8 +128,8 @@ Static function AutoGeraRA(jDados)
 	Local cContrt			:= jDados['cod_Contrt']
 	Local cCodCli			:= jDados['cod_Titular']
 	Local cNomSol			:= jDados['nom_NTitular']	
-	Local cGrupo 			:= jDados['grp_RA']
-	Local cTexto		 	:= "" + jDados['tex_RA']
+	Local cGrupo 			:= jDados['grp_Doc']
+	Local cTexto		 	:= "" + jDados['tex_Doc']
 
 		cTexto 		+= CRLF + "-----------------------------------------------" 									+ CRLF + CRLF
 		cTexto 		+= "Contrato: " 					+ jDados['cod_Contrt'] 															+ CRLF 
@@ -148,9 +148,9 @@ Static function AutoGeraRA(jDados)
 				cTexto 		+= "Parentesco: " + jDados['par_Testemunha_' + CValToChar(nCont2)] 				+ CRLF + CRLF
 			next nCont2
 
-	//Gera√ß√£o da RA
+	//GeraÁ„o da RA
 	oRA := GvRegistroAtendimento():new()
-		If !(oRA:gravaRA(cCodRA,;						
+		If !(oRA:gravaRA(cCodDoc,;						
 		 				 dDatabase,;				 				
 		 				 left(time(),5),;						
 		 				 "02", ;										
@@ -168,23 +168,23 @@ Static function AutoGeraRA(jDados)
 						 nTipo,;
 						 sTod(' ')))
 						 
-			MsgAlert('N√£o foi poss√≠vel gravar a RA. Favor gerar a RA manual e abrir um chamado ao CSTI relatando o problema!')
+			MsgAlert('N„o foi possÌvel gravar a RA. Favor gerar a RA manual e abrir um chamado ao CSTI relatando o problema!')
 			return .F.
 		Else
-			U_ENVMLRA2(cCodRA,'A','')
+			U_EnviaEmail(cCodDoc,'A','')
 		EndIf
 
-		jDados['cod_RA'] := cCodRA
+		jDados['cod_RA'] := cCodDoc
 
-		//Chama a gera√ß√£o do documento por tipo escolhido
+		//Chama a geraÁ„o do documento por tipo escolhido
 
 		Do case 
 			case (jDados['tp_troca'] == 1)
-				U_MRR1209A(jDados) //Doc em vida
+				U_DOC1(jDados) //Doc 1
 			case (jDados['tp_troca'] == 2)
-				U_MRR1209B(jDados) //Doc em Administrativo
+				U_DOC2(jDados) //Doc 2
 			case (jDados['tp_troca'] == 3)
-				U_MRR1209C(jDados) //Doc em Definitivo
+				U_DOC3(jDados) //Doc 3
 		Endcase
 
 Return .T.
@@ -199,21 +199,21 @@ Return .T.
 */
 Static Function validaAbox()
 
-		ZC0->(DbSetOrder(1))
-		If !ZC0->(DbSeek(xFilial("ZC0") + MV_PAR02))
-			MsgInfo("Contrato n√£o encontrado")
+		Table->(DbSetOrder(1))
+		If !Table->(DbSeek(xFilial("Table") + MV_PAR02))
+			MsgInfo("Contrato n„o encontrado")
 			return .F.	
 		Endif
 	
 		SA1->(DbSetOrder(1))
 		If !SA1->(DbSeek(xFilial("SA1")+ MV_PAR03))
-			MsgInfo("Cliente n√£o encontrado")
+			MsgInfo("Cliente n„o encontrado")
 			return .F.	
 		Endif
 
 		SBM->(DbSetOrder(1))
 		If !SBM->(DbSeek(xFilial("SBM")+ MV_PAR04))
-			MsgInfo("Grupo de RA n√£o encontrado")
+			MsgInfo("Grupo de DOC n„o encontrado")
 			return .F.	
 		Endif
 
