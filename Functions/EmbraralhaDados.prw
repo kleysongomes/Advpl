@@ -2,7 +2,7 @@
 #include 'protheus.ch'
 #include 'TOPCONN.CH'
 
-/*/{Protheus.doc} shuffle
+/*{Protheus.doc} shuffle
 Function that performs the shuffling of customer data for identity validation.
 @type user function
 @version  12.33
@@ -11,7 +11,7 @@ Function that performs the shuffling of customer data for identity validation.
 @param cCpf, character, Customer CPF
 @param nOrder, number, Login Attempt Number
 @return jData, scrambled data
-/*/
+*/
 User Function shuffle(cCpf, nOrder)
 
 	Local cStreet       := ""
