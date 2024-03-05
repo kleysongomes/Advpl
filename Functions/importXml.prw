@@ -4,13 +4,13 @@
 #INCLUDE "FWMVCDEF.CH"
 #INCLUDE "TopConn.ch"
 
-//{Protheus.doc} User Function ScreenXML
-// Tela MVC TABELA Z99 (Arquivos SX na pasta SRC > Files_sx)
-// @type  User Function
-// @author Kleyson Gomes
-// @since 14/01/2023
-// @version 12.33
-// @return
+/*{Protheus.doc} User Function ScreenXML
+	 Tela MVC TABELA Z99 (Arquivos SX na pasta SRC > Files_sx)
+	 @type  User Function
+	 @author Kleyson Gomes
+	 @since 14/01/2023
+	 @version 12.33
+	 @return */
 
 User Function ScreenXML()
 

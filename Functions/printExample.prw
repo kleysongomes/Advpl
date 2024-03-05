@@ -2,13 +2,13 @@
 #Include "RPTDef.ch"
 #Include "FWPrintSetup.ch"
 
-// {Protheus.doc} User Function MORR1230
-// Print identification tag with query
-// @type  User Function
-// @author Kleyson Gomes
-// @since 13/06/2023
-// @version version
-// @return Nil
+/* {Protheus.doc} User Function MORR1230
+   Print identification tag with query
+   @type  User Function
+   @author Kleyson Gomes
+   @since 13/06/2023
+   @version version
+   @return Nil */
 
 User Function printTag()
 
