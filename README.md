@@ -1,2 +1,2 @@
 # Advpl
-Rotinas e exemplos em ADVPL (TOTVS)
+Rotinas e exemplos em ADVPL (TOTVS).
