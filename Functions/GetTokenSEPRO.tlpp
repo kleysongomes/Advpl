@@ -1,0 +1,45 @@
+/*
+    {Protheus.doc} GetToken
+    Rotina para obter o token de acesso à API do Serpro.
+    @type  User Function
+    @author Kleyson Gomes
+    @since 10/12/2024
+    @see https://terminaldeinformacao.com/2022/12/07/como-consumir-um-ws-rest-gerando-token-via-advpl/
+*/
+
+Static Function SERPROToken()
+    Local 
+    Local cBaseURL   := "https://gateway.apiserpro.serpro.gov.br" 
+    Local cPath      := "/token?grant_type=client_credentials"
+    Local oRest      As Object 
+    Local jResponse  As Json 
+    Local aHeader    As Array 
+    Local cKey, cSecret, cToken, cResponse, cStatus, cError
+ 
+
+    cKey       := SuperGetMV( "MS_SERPKEY", .F., "Not_key" ) 
+    cSecret    := SuperGetMV( "MS_SERPSEC", .F., "Not_Secret" ) 
+    
+    
+    aHeader    := {}
+ 
+    Aadd(aHeader, "Authorization: Basic " + Encode64(cKey + ":" + cSecret))
+    Aadd(aHeader, "Content-Type: application/json")
+ 
+    // FWRest() object
+    oRest := FWRest():New(cBaseURL)
+    oRest:setPath(cPath)
+ 
+    // request
+    If (oRest:Post(aHeader))
+        cResponse := oRest:GetResult()
+        jResponse := JsonObject():New()
+ 
+        If (ValType(jResponse:fromJson(cResponse)) == 'U')
+            cToken := jResponse['access_token']
+        EndIf
+    Else
+        cError  := oRest:GetLastError()
+        cStatus := oRest:GetHTTPCode()
+    EndIf
+Return cToken
