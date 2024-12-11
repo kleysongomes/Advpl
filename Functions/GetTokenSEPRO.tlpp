@@ -1,5 +1,4 @@
-/*
-    {Protheus.doc} GetToken
+/*{Protheus.doc} GetToken
     Rotina para obter o token de acesso à API do Serpro.
     @type  User Function
     @author Kleyson Gomes
