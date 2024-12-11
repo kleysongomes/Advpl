@@ -1,0 +1,182 @@
+#include "protheus.ch"
+#include "topconn.ch"
+
+/*
+    {Protheus.doc} APISERPRO
+    Rotina que consulta o CNPJ do fornecedor na API do Serpro e atualiza o cadastro do fornecedor com as informações obtidas.
+    @type   Function
+    @author Kleyson Gomes
+    @since 14/10/2024
+    @param cA2_CGC (CNPJ do fornecedor)
+    @return {lAtualizado, lOptanteSimples}
+    @see https://apicenter.estaleiro.serpro.gov.br/documentacao/consulta-cnpj/pt/demonstracao-v2/
+    @see https://apicenter.estaleiro.serpro.gov.br/documentacao/consulta-cnpj/pt/quick_start/#como-utilizar-a-api-cnpj-demonstracao
+*/
+User Function APISERPRO(cA2_CGC)
+
+    Local cBaseUrl                  := "https://gateway.apiserpro.serpro.gov.br" 
+    Local cHeaders                  := {'accept: application/json','Authorization: Bearer ' + GetToken()}
+    Local cPath                     := "/consulta-cnpj-df/v2/empresa/"
+    Local lSucesso                  := .F.
+    Local lAtualizado               := .F.
+    Local cOptanteSimples           := "2" 
+    Local lOptanteSimples           := .F.
+    Local cMsgErro                  := ""
+    Local cjsonResponse             := ""
+    Local oDadosCNPJ                := JsonObject():New()     
+    Local ret                       := Nil                
+    Local oInformacoesAdicionais    := Nil        
+
+    If Empty(cA2_CGC) 
+        conout("---------- CGC não informados. ----------")
+        Return lAtualizado
+    EndIf
+
+    cPath += cA2_CGC
+
+    conout("------------------------------------------------------- ")
+    conout("    /////   /////    // | API SERPRO - GOV.BR           ")
+    conout("  //   //  //   //  //  | Consulta: CNPJ/CPF            ")
+    conout(" //===//  /////    //   | Versão: 2.0                   ")
+    conout("//   //  //       //    | https://www.serpro.gov.br/    ")
+    conout("------------------------------------------------------- ")
+
+    // Cria o objeto para fazer a requisição à API e realiza a consulta
+    conout("---------- Iniciando consulta ao fornecedor... ----------")
+    oAPISERPRO  := FWRest():New(cBaseUrl)
+    oAPISERPRO:SetPath(cPath)
+    lSucesso    := oAPISERPRO:Get(cHeaders)
+
+    // Verifica se a requisição foi bem-sucedida
+    If !lSucesso
+        cMsgErro := oAPISERPRO:GetLastError()
+        conout("---------- Erro ao consultar os dados do fornecedor na API do Serpro: " + cMsgErro + " ----------")
+    Else
+        // Captura a resposta JSON retornada pela API
+        cjsonResponse := DecodeUtf8(oAPISERPRO:GetResult())
+
+        // Popula o JsonObject com a resposta JSON
+        ret := oDadosCNPJ:FromJson(cjsonResponse)
+
+        // Verifica se houve erro ao processar o JSON
+        If ValType(ret) == "C"
+            conout("---------- Erro ao processar o JSON: " + ret + " ----------")
+        Else
+            // Acessa o objeto 'informacoesAdicionais' diretamente dentro do JSON
+            oInformacoesAdicionais := oDadosCNPJ:GetJsonObject("informacoesAdicionais")
+
+            If oInformacoesAdicionais != Nil
+                // Verifica se a chave 'optanteSimples' está presente
+                If !Empty(oInformacoesAdicionais["optanteSimples"])
+                    cOptanteSimples := oInformacoesAdicionais["optanteSimples"]
+
+                    // Verifica se o fornecedor é optante do Simples Nacional
+                    Do Case
+                        Case Upper(cOptanteSimples) == "SIM"
+                            cOptanteSimples := "1" // Sim
+                            lOptanteSimples := .T.
+                        Case Upper(cOptanteSimples) == "NÃO"
+                            cOptanteSimples := "2" // Não
+                        Otherwise
+                            cOptanteSimples := "2" // Não Informado
+                    EndCase
+                Else
+                    conout("---------- O campo 'optanteSimples' não foi encontrado nas informações adicionais. ----------")
+                EndIf
+            Else
+                conout("---------- Não foram encontradas informações adicionais no retorno da API. ----------")
+            EndIf
+        EndIf
+    EndIf
+    
+    Begin Transaction
+        dbSelectArea("SA2")
+        SA2->(dbSetOrder(3))
+        If DbSeek(xFilial("SA2") + cA2_CGC)
+            RecLock("SA2", .F.)
+                SA2->A2_SIMPNAC := cOptanteSimples
+                SA2->A2_NATUREZ := iif(lOptanteSimples,"2211049","") 
+                SA2->A2_CALCIRF := iif(lOptanteSimples,"3","1") //3 - IRRF Optante Simples / "1" - IRRF Normal
+            MsUnlock()
+            lAtualizado := .T.
+            conout("---------- Fornecedor atualizado com sucesso. ----------")
+        EndIf
+    End Transaction
+
+Return {lAtualizado,lOptanteSimples}
+
+/*
+    {Protheus.doc} GetToken
+    Rotina para obter o token de acesso à API do Serpro.
+    @type   Function
+    @author Kleyson Gomes
+    @since 10/12/2024
+    @see https://terminaldeinformacao.com/2022/12/07/como-consumir-um-ws-rest-gerando-token-via-advpl/
+*/
+Static Function GetToken()
+    
+    Local cBaseURL  := "https://gateway.apiserpro.serpro.gov.br" 
+    Local cPath     := "/token?grant_type=client_credentials"
+    Local jResponse := JsonObject():New() 
+    Local aHeader   :={} 
+    Local cKey      := "" 
+    Local cSecret   := "" 
+    Local cToken    := "" 
+    Local cResponse := "" 
+    Local cStatus   := "" 
+    Local cError    := ""
+    Local oRest     := Nil    
+ 
+
+    cKey       := SuperGetMV( "MS_SPRKEY", .F., "Not_key" ) 
+    cSecret    := SuperGetMV( "MS_SPRSEC", .F., "Not_Secret" ) 
+    
+    
+    aHeader    := {}
+ 
+    Aadd(aHeader, "Authorization: Basic " + Encode64(cKey + ":" + cSecret))
+    Aadd(aHeader, "Content-Type: application/json")
+ 
+    // FWRest() object
+    oRest := FWRest():New(cBaseURL)
+    oRest:setPath(cPath)
+ 
+    // request
+    If (oRest:Post(aHeader))
+        cResponse := oRest:GetResult()
+        jResponse := JsonObject():New()
+ 
+        If (ValType(jResponse:fromJson(cResponse)) == 'U')
+            cToken := jResponse['access_token']
+        EndIf
+    Else
+        cError  := oRest:GetLastError()
+        cStatus := oRest:GetHTTPCode()
+    EndIf
+Return cToken
+/*
+    {Protheus.doc} chamaAPI
+    Rotina para execução de teste isolado na requisição da API.
+    @type   Function
+    @author Kleyson Gomes
+    @since 14/10/2024
+*/
+user function chamaAPI()
+    Local cA2_CGC := "CNPJ_INFORMAR_AQUI" 
+
+    RpcSetType( 3 )
+	RpcSetEnv( '01', '01')  
+
+    aRetorno := u_APISERPRO(cA2_CGC)
+
+    Do Case
+        Case aRetorno[1]
+            MsgInfo("Fornecedor atualizado com sucesso.", "Consulta de Fornecedor")
+            If aRetorno[2]
+                MsgInfo("Fornecedor é optante do Simples Nacional.", "Consulta de Fornecedor")
+            EndIf
+        Case !aRetorno[1]
+            MsgInfo("Fornecedor não foi atualizado.", "Consulta de Fornecedor")
+    EndCase
+    
+return
