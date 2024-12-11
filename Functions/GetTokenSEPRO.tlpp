@@ -1,7 +1,7 @@
 #INCLUDE "Protheus.ch"   
 #Include "TopConn.ch"
 
-/*{Protheus.doc} GetToken
+/*{Protheus.doc} SERPROToken
     Rotina para obter o token de acesso à API do Serpro.
     @type  User Function
     @author Kleyson Gomes
