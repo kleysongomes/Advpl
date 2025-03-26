@@ -24,6 +24,7 @@ Este repositório tem como objetivo compartilhar rotinas úteis e exemplos prát
 
 ---
 
+
 ## 🚀 Como Utilizar  
 
 1. **Clone o repositório**
