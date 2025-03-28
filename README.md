@@ -31,3 +31,4 @@ Este repositório tem como objetivo compartilhar rotinas úteis e exemplos prát
 2. **Para a execução de qualquer rotina é necessário ter o Protheus instalado na sua máquina**
 3. **Tendo o Protheus instalado, execute o comando SHIFT + F9**
 4. **Após isso, SHIFT + F5 para iniciar a execução no módulo desejado ou chamar a function por si só**
+
