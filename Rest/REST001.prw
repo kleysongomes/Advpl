@@ -210,12 +210,12 @@ Static Function VisualizaWH(oJson)
 
 Return oResponse
 
-/*/{Protheus.doc} PagamentoWH
+/*{Protheus.doc} PagamentoWH
 Baixar fatura recorrencia
 @version  12.33
 @author Leonardo Monteiro
 @since 07/07/2023
-/*/
+*/
 Static Function PagamentoWH(oJson)
 	local i := 0
 
