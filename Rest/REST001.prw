@@ -3,10 +3,10 @@
 #include "topconn.ch"
 #include "tbiconn.ch"
 
-WSRESTFUL WebHookVindi DESCRIPTION "ServiÁo REST para WebHook VINDI" FORMAT APPLICATION_JSON
+WSRESTFUL WebHookVindi DESCRIPTION "Servi√ßo REST para WebHook VINDI" FORMAT APPLICATION_JSON
 
-	//WSMETHOD POST DESCRIPTION "ServiÁo POST para WebHook VINDI" WSSYNTAX "/webhookvindi"
-	WSMETHOD POST DESCRIPTION "ServiÁo POST para WebHook VINDI" WSSYNTAX "/webhookvindi"
+	//WSMETHOD POST DESCRIPTION "Servi√ßo POST para WebHook VINDI" WSSYNTAX "/webhookvindi"
+	WSMETHOD POST DESCRIPTION "Servi√ßo POST para WebHook VINDI" WSSYNTAX "/webhookvindi"
 
 END WSRESTFUL
 
@@ -41,17 +41,17 @@ WSMETHOD POST WSSERVICE WebHookVindi
 		EndCase
 
 	else
-		SetRestFault(204, Encondeutf8('{ message: "N„o foi possÌvel ler as informaÁıes" }'))
+		SetRestFault(204, Encondeutf8('{ message: "N√£o foi poss√≠vel ler as informa√ß√µes" }'))
 		return .F.
 	endif
 
 Return .T.
-/*/{Protheus.doc} RejeitaWH
-Registra historico de CobranÁa Rejeitada
+/*{Protheus.doc} RejeitaWH
+Registra historico de Cobran√ßa Rejeitada
 @version  12.33
 @author kleysongomes
 @since 26/06/2023
-/*/
+*/
 Static Function RejeitaWH(oJson)
 	local cCodCli       := ""
 	local cAcao         := ""
@@ -72,7 +72,7 @@ Static Function RejeitaWH(oJson)
 	jResponse := oRecorrencia:getInvoice(,,,nIdBill)
 
 	If jResponse["errors"] != NIL
-		conout('--------- FATURA N√O LOCALIZADA ---------')
+		conout('--------- FATURA N√ÉO LOCALIZADA ---------')
 		Return oResponse
 	EndIf
 
@@ -98,8 +98,8 @@ Static Function RejeitaWH(oJson)
 	cMsgHist := "WEBHOOK VINDI - Transacao Rejeitada" + CRLF
 	cMsgHist += REPLICATE( "-", 40 ) + CRLF
 	cMsgHist += "Rotina de origem: WebHookVindi" + CRLF
-	cMsgHist += "Uma tentativa de cobranÁa foi rejeitada" + CRLF
-	cMsgHist += "OperaÁ„o: "+ cAcao + CRLF
+	cMsgHist += "Uma tentativa de cobran√ßa foi rejeitada" + CRLF
+	cMsgHist += "Opera√ß√£o: "+ cAcao + CRLF
 	cMsgHist += "Parcela: "+ cValToChar(cParcela) + CRLF
 	cMsgHist += "Valor: "+ cValor + CRLF
 	cMsgHist += "Data: " + Dtoc(DATE()) + CRLF
@@ -148,12 +148,12 @@ Static Function RejeitaWH(oJson)
 
 Return oResponse
 
-/*/{Protheus.doc} VisualizaWH
+/*{Protheus.doc} VisualizaWH
 Registra historico de Fatura Visualizada
 @version  12.33
 @author kleysongomes
 @since 26/06/2023
-/*/
+*/
 Static Function VisualizaWH(oJson)
 	local cCodCli       := ""
 	local cAcao       := ""
@@ -173,7 +173,7 @@ Static Function VisualizaWH(oJson)
 	jResponse := oRecorrencia:getInvoice(,,,nIdBill)
 
 	If jResponse["errors"] != NIL
-		conout('--------- FATURA N√O LOCALIZADA ---------')
+		conout('--------- FATURA N√ÉO LOCALIZADA ---------')
 		Return oResponse
 	EndIf
 
@@ -193,7 +193,7 @@ Static Function VisualizaWH(oJson)
 	cMsgHist += REPLICATE( "-", 40 ) + CRLF
 	cMsgHist += "Rotina de origem: WebHookVindi" + CRLF
 	cMsgHist += "A fatura foi visualizada" + CRLF
-	cMsgHist += "OperaÁ„o: "+ cAcao + CRLF
+	cMsgHist += "Opera√ß√£o: "+ cAcao + CRLF
 	cMsgHist += "Parcela: "+ cValToChar(cParcela) + CRLF
 	cMsgHist += "Valor: "+ cValor + CRLF
 	cMsgHist += "Data: " + Dtoc(DATE()) + CRLF
@@ -249,14 +249,14 @@ Static Function PagamentoWH(oJson)
     /*value*/cValor)
 
 	if empty(jMensalidade["toReceive"]["recno"])
-		errorMail(oJson, "N„o achou a mensalidade")
+		errorMail(oJson, "N√£o achou a mensalidade")
 		return .F.
 	endif
 
 	//Compania de pagamento
 	jMensalidade['toReceive']['nPayment_companies'] := 12
 
-	//Numero de autorizaÁ„o do pagamento
+	//Numero de autoriza√ß√£o do pagamento
 	jMensalidade['toReceive']['AUTORIZACAO'] := oJson["event"]["data"]["bill"]["charges"][1]["last_transaction"]["gateway_response_fields"]["proof_of_sale"]
 
 	jMensalidade['toReceive']['DTBAIXA'] := Date()
@@ -269,7 +269,7 @@ Static Function PagamentoWH(oJson)
 	oCtsReceber:BaixaParcela( @jMensalidade["toReceive"] )
 
 	if !jMensalidade["toReceive"]["STATUS"]
-		errorMail(oJson, "N„o foi possivel baixar o titulo")
+		errorMail(oJson, "N√£o foi possivel baixar o titulo")
 		return .F.
 	endif
 
